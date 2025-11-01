@@ -3,126 +3,31 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CampusPanel Admin Dashboard</title>
+  <title>Placement Admin — Live Overview</title>
 
-  <!-- Tailwind CSS + Chart.js -->
+  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    body {
-      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
-    }
-
-    .glass {
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.65));
-      backdrop-filter: blur(6px);
-    }
-
-    .card-shadow {
-      box-shadow: 0 12px 30px rgba(2, 6, 23, 0.09);
-    }
-
-    .muted {
-      color: #6B7280;
-    }
-
-    .pulse {
-      animation: pulse 1s;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-
-    .fab {
-      position: fixed;
-      right: 18px;
-      bottom: 28px;
-      z-index: 50;
-      box-shadow: 0 4px 30px #6366f188;
-    }
-
-    /* ✅ Responsive Sidebar */
-    .hamburger {
-      display: none;
-      position: absolute;
-      top: 18px;
-      left: 12px;
-      background: #fff;
-      z-index: 100;
-      border-radius: 8px;
-      padding: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    @media (max-width: 900px) {
-      aside {
-        position: fixed;
-        left: -260px;
-        top: 0;
-        width: 240px;
-        height: 100%;
-        padding: 1rem;
-        background: white;
-        border-right: 1px solid #e2e8f0;
-        transition: left 0.3s ease-in-out;
-      }
-
-      aside.open {
-        left: 0;
-      }
-
-      .hamburger {
-        display: inline-block;
-      }
-
-      main {
-        padding: 1rem;
-      }
-    }
-
-    /* Tablet adjustments */
-    @media (max-width: 768px) {
-      .grid-cols-6 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    /* Mobile optimizations */
-    @media (max-width: 500px) {
-      .grid {
-        gap: 0.75rem;
-      }
-
-      .fab {
-        right: 12px;
-        bottom: 14px;
-        font-size: 1rem;
-        padding: 10px 16px;
-      }
-    }
-
+    /* extra polish */
+    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    .glass { background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.55)); backdrop-filter: blur(6px); }
+    .card-shadow { box-shadow: 0 12px 30px rgba(2,6,23,0.08); }
+    .muted { color: #6B7280; }
+    .small { font-size: 0.85rem; }
+    .pulse-green { animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
   </style>
 </head>
-
 <body class="bg-gradient-to-b from-slate-50 to-white min-h-screen">
-  <div class="min-h-screen flex relative">
 
-    <!-- Hamburger Menu -->
-    <button id="hamburgerBtn" class="hamburger border">
-      <svg width="26" height="26" fill="none" stroke="#222">
-        <path stroke-width="2" d="M6 9h14M6 13h14M6 17h14" />
-      </svg>
-    </button>
-
-    <!-- Sidebar -->
-    <aside id="sidebar" class="w-72 bg-white/60 backdrop-blur-md p-6 border-r border-slate-200 md:sticky top-0 left-0 h-screen z-40">
-      <div class="logo flex items-center gap-3 mb-6">
-        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-500 text-white flex items-center justify-center font-bold">
-          CP
-        </div>
+  <div class="min-h-screen flex">
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-white/60 backdrop-blur-md p-6 border-r border-slate-200">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-500 text-white flex items-center justify-center font-bold">CP</div>
         <div>
           <div class="text-xl font-semibold">CampusPanel</div>
           <div class="text-xs muted">Admin Dashboard</div>
@@ -130,157 +35,477 @@
       </div>
 
       <nav class="space-y-2 text-slate-700">
-        <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-50 text-blue-600" data-section="dashboard">
-          🏠 <span>Dashboard</span>
-        </a>
-        <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg" data-section="students">👩‍🎓 <span>Students</span></a>
-        <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg" data-section="colleges">🏫 <span>Colleges</span></a>
-        <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg" data-section="companies">🏢 <span>Companies</span></a>
-        <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg" data-section="reports">📄 <span>Reports</span></a>
+        <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-50 text-blue-700">🏠 Dashboard</a>
+        <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100">👩‍🎓 Students</a>
+        <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100">🏫 Colleges</a>
+        <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100">🏢 Companies</a>
+        <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100">📄 Reports</a>
       </nav>
+
+      <div class="mt-8">
+        <div class="text-xs muted mb-2">Filters quick</div>
+        <button id="resetBtn" class="w-full px-3 py-2 rounded-lg border text-sm">Reset Filters</button>
+      </div>
+
+      <div class="mt-6 text-xs muted">Built for: College Placement Analytics</div>
     </aside>
 
-    <!-- Main Content -->
-    <main id="mainContent" class="flex-1 p-6 md:ml-72 space-y-6">
+    <!-- MAIN -->
+    <main class="flex-1 p-6 space-y-6">
 
-      <h1 class="text-3xl font-bold text-slate-800">Placement Dashboard</h1>
+      <!-- Topbar -->
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="text-2xl font-bold">Overview</div>
+          <div class="text-sm muted">Live insights — auto-updating</div>
+        </div>
 
-      <!-- Multi-Select Dropdown -->
-      <div class="bg-white/80 rounded-xl shadow p-4 border border-slate-200">
-        <label class="block mb-2 font-medium text-slate-700">Select Colleges:</label>
-        <select id="collegeSelect" multiple class="border border-slate-300 rounded-lg p-2 w-full">
-          <option value="VIT">VIT</option>
-          <option value="GVP">GVP</option>
-          <option value="ANITS">ANITS</option>
-          <option value="RAGHU">RAGHU</option>
-          <option value="MVGR">MVGR</option>
-        </select>
-      </div>
-
-      <!-- Summary Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="glass p-5 rounded-xl text-center card-shadow">
-          <h2 class="text-slate-700 font-semibold">Total Students</h2>
-          <p id="totalStudents" class="text-2xl font-bold text-blue-600">0</p>
-        </div>
-        <div class="glass p-5 rounded-xl text-center card-shadow">
-          <h2 class="text-slate-700 font-semibold">Placed Students</h2>
-          <p id="placedStudents" class="text-2xl font-bold text-green-600">0</p>
-        </div>
-        <div class="glass p-5 rounded-xl text-center card-shadow">
-          <h2 class="text-slate-700 font-semibold">Average Package</h2>
-          <p id="avgPackage" class="text-2xl font-bold text-indigo-600">0 LPA</p>
-        </div>
-        <div class="glass p-5 rounded-xl text-center card-shadow">
-          <h2 class="text-slate-700 font-semibold">Placement %</h2>
-          <p id="placementPercent" class="text-2xl font-bold text-orange-600">0%</p>
+        <div class="flex items-center gap-4">
+          <div class="text-right">
+            <div class="font-semibold">Admin</div>
+            <div class="text-xs muted">admin@campus.com</div>
+          </div>
+          <div class="w-10 h-10 rounded-md bg-blue-100 text-blue-700 flex items-center justify-center font-semibold">A</div>
         </div>
       </div>
 
-      <!-- Charts -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="glass p-4 rounded-xl card-shadow">
-          <canvas id="placementChart"></canvas>
+      <!-- Live summary cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+        <div class="col-span-2 bg-white p-4 rounded-lg card-shadow glass">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm muted">Total Students</div>
+              <div id="totalStudents" class="text-3xl font-bold text-blue-600">—</div>
+              <div class="small muted">All colleges</div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs muted">Placed %</div>
+              <div id="placedPercent" class="text-xl font-semibold text-green-600">—</div>
+            </div>
+          </div>
         </div>
-        <div class="glass p-4 rounded-xl card-shadow">
-          <canvas id="packageChart"></canvas>
+
+        <div class="bg-white p-4 rounded-lg card-shadow glass">
+          <div class="text-sm muted">Placed Students</div>
+          <div id="placedCount" class="text-2xl font-bold text-green-600">—</div>
+          <div class="small muted">Total placed</div>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg card-shadow glass">
+          <div class="text-sm muted">Active Now</div>
+          <div id="activeNow" class="text-2xl font-bold text-amber-600 pulse-green">—</div>
+          <div class="small muted">Active last 1 hr</div>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg card-shadow glass">
+          <div class="text-sm muted">Active (24h)</div>
+          <div id="active24" class="text-2xl font-bold text-indigo-600">—</div>
+          <div class="small muted">Unique users last 24h</div>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg card-shadow glass">
+          <div class="text-sm muted">Active (7d)</div>
+          <div id="active7" class="text-2xl font-bold text-pink-600">—</div>
+          <div class="small muted">Unique users last 7d</div>
         </div>
       </div>
+
+      <!-- Filters row -->
+      <div class="bg-white p-4 rounded-lg card-shadow flex flex-col md:flex-row gap-4 items-center">
+        <div class="flex items-center gap-3 w-full md:w-1/3">
+          <label class="small muted w-28">Filter by:</label>
+          <select id="filterType" class="p-2 border rounded w-full">
+            <option value="all">All (no filter)</option>
+            <option value="college">College</option>
+            <option value="district">District</option>
+            <option value="group">Group</option>
+            <option value="company">Company</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-3 w-full md:w-1/3">
+          <label class="small muted w-28">Select</label>
+          <select id="filterValue" class="p-2 border rounded w-full">
+            <option value="All Colleges">All Colleges</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-3 ml-auto">
+          <button id="applyFilter" class="px-4 py-2 bg-blue-600 text-white rounded">Apply</button>
+          <button id="clearFilter" class="px-4 py-2 border rounded">Clear</button>
+        </div>
+      </div>
+
+      <!-- Charts grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Column 1: Pie + line -->
+        <div class="col-span-1 space-y-4">
+          <div class="bg-white p-4 rounded-lg card-shadow">
+            <div class="flex items-center justify-between mb-2">
+              <div class="font-semibold">Placed vs Not Placed</div>
+              <div class="small muted">overall / selection</div>
+            </div>
+            <canvas id="piePlaced"></canvas>
+          </div>
+
+          <div class="bg-white p-4 rounded-lg card-shadow">
+            <div class="flex items-center justify-between mb-2">
+              <div class="font-semibold">Active Users (live)</div>
+              <div class="small muted">last 24 points</div>
+            </div>
+            <canvas id="lineActive"></canvas>
+          </div>
+        </div>
+
+        <!-- Column 2: Bar top companies -->
+        <div class="col-span-1 space-y-4">
+          <div class="bg-white p-4 rounded-lg card-shadow">
+            <div class="flex items-center justify-between mb-2">
+              <div class="font-semibold">Top Hiring Companies (this year)</div>
+              <div class="small muted">count</div>
+            </div>
+            <canvas id="barCompanies"></canvas>
+          </div>
+
+          <div class="bg-white p-4 rounded-lg card-shadow">
+            <div class="flex items-center justify-between mb-2">
+              <div class="font-semibold">Companies Visited Per Year</div>
+              <div class="small muted">select college → shows years</div>
+            </div>
+            <canvas id="companyYear"></canvas>
+          </div>
+        </div>
+
+        <!-- Column 3: Recent activity + details -->
+        <div class="col-span-1 space-y-4">
+          <div class="bg-white p-4 rounded-lg card-shadow">
+            <div class="flex items-center justify-between mb-2">
+              <div class="font-semibold">Selection Summary</div>
+              <div class="small muted" id="selectionLabel">All Colleges • All Years</div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="p-3 rounded border">
+                <div class="small muted">Colleges Selected</div>
+                <div id="selColleges" class="font-semibold">—</div>
+              </div>
+              <div class="p-3 rounded border">
+                <div class="small muted">Companies (this year)</div>
+                <div id="selCompanies" class="font-semibold">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white p-4 rounded-lg card-shadow" style="max-height:360px; overflow:auto;">
+            <div class="font-semibold mb-2">Recent Activity</div>
+            <ul id="activityFeed" class="space-y-3 text-sm">
+              <!-- JS fills -->
+            </ul>
+          </div>
+        </div>
+      </div>
+
     </main>
-
-    <!-- Floating Add Button -->
-    <button id="fab" class="fab bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition hidden">
-      + Add
-    </button>
   </div>
 
-  <!-- JS Logic -->
-  <script>
-    const sidebar = document.getElementById('sidebar');
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    let sidebarOpen = false;
-    hamburgerBtn.onclick = () => {
-      sidebarOpen = !sidebarOpen;
-      sidebar.classList.toggle('open', sidebarOpen);
-    };
-    window.addEventListener('resize', () => {
-      if (window.innerWidth > 900) sidebar.classList.remove('open');
+<script>
+/* ===========================
+   Sample data model (replace with API)
+   - colleges: metadata (district, group)
+   - stats: per-college totals (placed, active, total)
+   - companyVisits: per-year per-college counts
+   - companyTop: top hiring companies counts for this year (per-college)
+   =========================== */
+
+const colleges = [
+  { name: "ABC Engineering", district: "Hyderabad", group: "Group A" },
+  { name: "XYZ Tech", district: "Hyderabad", group: "Group A" },
+  { name: "JNTU", district: "Warangal", group: "Group B" },
+  { name: "VNR", district: "Nalgonda", group: "Group B" },
+  { name: "MGIT", district: "Hyderabad", group: "Group A" }
+];
+
+const stats = {
+  "ABC Engineering": { total: 300, placed: 120, active24: 200, active1h: 20, active7d: 240 },
+  "XYZ Tech": { total: 400, placed: 150, active24: 300, active1h: 35, active7d: 350 },
+  "JNTU": { total: 350, placed: 180, active24: 280, active1h: 25, active7d: 320 },
+  "VNR": { total: 300, placed: 140, active24: 180, active1h: 18, active7d: 210 },
+  "MGIT": { total: 350, placed: 120, active24: 310, active1h: 30, active7d: 330 }
+};
+
+const companyVisits = {
+  2021: { "ABC Engineering": 4, "XYZ Tech": 5, "JNTU": 6, "VNR": 3, "MGIT": 4 },
+  2022: { "ABC Engineering": 6, "XYZ Tech": 7, "JNTU": 8, "VNR": 4, "MGIT": 5 },
+  2023: { "ABC Engineering": 8, "XYZ Tech": 10, "JNTU": 9, "VNR": 6, "MGIT": 7 },
+  2024: { "ABC Engineering": 9, "XYZ Tech": 12, "JNTU": 11, "VNR": 8, "MGIT": 9 },
+  2025: { "ABC Engineering": 6, "XYZ Tech": 8, "JNTU": 7, "VNR": 5, "MGIT": 7 }
+};
+
+// top companies hired this year per college
+const topCompaniesThisYear = {
+  "All Colleges": { "Infosys": 120, "TCS": 110, "Wipro": 95, "Amazon": 80, "Google": 30 },
+  "ABC Engineering": { "Infosys": 30, "TCS": 20, "Wipro": 18, "Amazon": 12, "Google": 5 },
+  "XYZ Tech": { "Infosys": 40, "TCS": 30, "Wipro": 20, "Amazon": 18, "Google": 8 },
+  "JNTU": { "Infosys": 30, "TCS": 25, "Wipro": 22, "Amazon": 15, "Google": 10 },
+  "VNR": { "Infosys": 12, "TCS": 20, "Wipro": 12, "Amazon": 8, "Google": 0 },
+  "MGIT": { "Infosys": 8, "TCS": 15, "Wipro": 23, "Amazon": 27, "Google": 7 }
+};
+
+// Activity feed sample
+const sampleActivity = [
+  { person: "Ramya", action: "Uploaded resume", college: "ABC Engineering", time: "5m ago" },
+  { person: "Ravi", action: "Applied to Infosys", college: "XYZ Tech", time: "12m ago" },
+  { person: "Anita", action: "Completed mock test (82%)", college: "JNTU", time: "30m ago" },
+  { person: "TPO - VNR", action: "Approved drive by Wipro", college: "VNR", time: "1h ago" },
+  { person: "MGIT Admin", action: "Added 40 new students", college: "MGIT", time: "2h ago" }
+];
+
+/* ======== Helpers ======== */
+function sum(arr){ return arr.reduce((a,b)=>a+b,0); }
+function aggregateAllStats(){
+  const names = Object.keys(stats);
+  let total=0, placed=0, active24=0, active1h=0, active7d=0;
+  names.forEach(n=>{ total+=stats[n].total; placed+=stats[n].placed; active24+=stats[n].active24; active1h+=stats[n].active1h; active7d+=stats[n].active7d; });
+  return { total, placed, active24, active1h, active7d };
+}
+
+/* ======== DOM references ======== */
+const totalEl = document.getElementById('totalStudents');
+const placedCountEl = document.getElementById('placedCount');
+const placedPercentEl = document.getElementById('placedPercent');
+const activeNowEl = document.getElementById('activeNow');
+const active24El = document.getElementById('active24');
+const active7El = document.getElementById('active7');
+
+const filterTypeEl = document.getElementById('filterType');
+const filterValueEl = document.getElementById('filterValue');
+const applyFilterBtn = document.getElementById('applyFilter');
+const clearFilterBtn = document.getElementById('clearFilter');
+const resetBtn = document.getElementById('resetBtn');
+
+const selectionLabel = document.getElementById('selectionLabel');
+const selColleges = document.getElementById('selColleges');
+const selCompanies = document.getElementById('selCompanies');
+const activityFeed = document.getElementById('activityFeed');
+
+/* ======== Populate filterValue options by default (All Colleges) ======== */
+function populateFilterValues(type='all'){
+  filterValueEl.innerHTML = '';
+  if(type==='all'){
+    const opt = document.createElement('option'); opt.value='All Colleges'; opt.textContent='All Colleges'; filterValueEl.append(opt);
+  }
+  if(type==='college' || type==='all'){
+    const group = document.createElement('optgroup'); group.label='Colleges';
+    colleges.forEach(c=>{ const o=document.createElement('option'); o.value=c.name; o.textContent=c.name; group.appendChild(o); });
+    filterValueEl.append(group);
+  }
+  if(type==='district' || type==='all'){
+    const districts = [...new Set(colleges.map(c=>c.district))];
+    const group = document.createElement('optgroup'); group.label='Districts';
+    districts.forEach(d=>{ const o=document.createElement('option'); o.value='district::'+d; o.textContent=d; group.appendChild(o); });
+    filterValueEl.append(group);
+  }
+  if(type==='group' || type==='all'){
+    const groups = [...new Set(colleges.map(c=>c.group))];
+    const group = document.createElement('optgroup'); group.label='Groups';
+    groups.forEach(g=>{ const o=document.createElement('option'); o.value='group::'+g; o.textContent=g; group.appendChild(o); });
+    filterValueEl.append(group);
+  }
+  if(type==='company'){
+    // list companies from aggregated topCompaniesThisYear
+    const companies = Object.keys(topCompaniesThisYear['All Colleges']);
+    const group = document.createElement('optgroup'); group.label='Companies';
+    companies.forEach(c=>{ const o=document.createElement('option'); o.value='company::'+c; o.textContent=c; group.appendChild(o); });
+    filterValueEl.append(group);
+  }
+}
+
+/* ======== Initial state & charts setup ======== */
+let activeHistory = Array.from({length:24}, (_,i)=> Math.floor(50 + Math.random()*120));
+let pieChart, lineChart, barCompaniesChart, companyYearChart;
+
+function initCharts(){
+  const pieCtx = document.getElementById('piePlaced').getContext('2d');
+  pieChart = new Chart(pieCtx, {
+    type:'pie',
+    data:{ labels:['Placed','Not Placed'], datasets:[{ data:[0,0], backgroundColor:['#10b981','#93c5fd'] }] },
+    options:{ responsive:true, plugins:{ legend:{position:'bottom'} } }
+  });
+
+  const lineCtx = document.getElementById('lineActive').getContext('2d');
+  lineChart = new Chart(lineCtx, {
+    type:'line',
+    data:{ labels: Array.from({length:24}, (_,i)=>''), datasets:[{ label:'Active', data:activeHistory, borderColor:'#2563eb', backgroundColor:'rgba(37,99,235,0.12)', fill:true, tension:0.3 }] },
+    options:{ responsive:true, plugins:{ legend:{display:false} }, scales:{ y:{ beginAtZero:true } } }
+  });
+
+  const barCtx = document.getElementById('barCompanies').getContext('2d');
+  barCompaniesChart = new Chart(barCtx, {
+    type:'bar',
+    data:{ labels:[], datasets:[{ label:'Hires', data:[], backgroundColor:'#6366f1' }] },
+    options:{ responsive:true, plugins:{ legend:{display:false} }, scales:{ y:{ beginAtZero:true } } }
+  });
+
+  const cyCtx = document.getElementById('companyYear').getContext('2d');
+  companyYearChart = new Chart(cyCtx, {
+    type:'bar',
+    data:{ labels:Object.keys(companyVisits), datasets:[{ label:'Companies visited', data:[], backgroundColor:'#f97316' }] },
+    options:{ responsive:true, plugins:{ legend:{display:false} }, scales:{ y:{ beginAtZero:true } } }
+  });
+}
+
+/* ======== Render functions ======== */
+function renderActivity(){
+  activityFeed.innerHTML='';
+  sampleActivity.forEach(a=>{
+    const li = document.createElement('li');
+    li.className='flex items-start gap-3';
+    li.innerHTML = `<div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-semibold">${a.person[0]}</div>
+      <div class="flex-1">
+        <div class="text-sm"><span class="font-semibold">${a.person}</span> — ${a.action}</div>
+        <div class="small muted">${a.college} • ${a.time}</div>
+      </div>`;
+    activityFeed.appendChild(li);
+  });
+}
+
+function updateOverview(selection){
+  // selection: { type:'all'|'college'|'district'|'group'|'company', value:... }
+  let names=[];
+  if(!selection || selection.type==='all') names = Object.keys(stats);
+  else if(selection.type==='college') names = [selection.value];
+  else if(selection.type==='district') names = colleges.filter(c=>c.district===selection.value).map(c=>c.name);
+  else if(selection.type==='group') names = colleges.filter(c=>c.group===selection.value).map(c=>c.name);
+  else if(selection.type==='company') {
+    // for a company, aggregate across colleges where this company hired (topCompaniesThisYear)
+    names = Object.keys(stats);
+  }
+
+  // aggregate stats
+  let total=0, placed=0, active24=0, active1h=0, active7d=0;
+  names.forEach(n=>{
+    const s = stats[n];
+    total += s.total; placed += s.placed; active24 += s.active24; active1h += s.active1h; active7d += s.active7d;
+  });
+
+  // Update cards
+  totalEl.textContent = total;
+  placedCountEl.textContent = placed;
+  placedPercentEl.textContent = ((placed/total)*100).toFixed(1)+'%';
+  activeNowEl.textContent = active1h;
+  active24El.textContent = active24;
+  active7El.textContent = active7d;
+
+  // Pie
+  pieChart.data.datasets[0].data = [placed, total - placed];
+  pieChart.update();
+
+  // Line (active live trend is handled by live ticker, but we can scale)
+  // Bar companies: top companies for selection
+  let companyCounts = {};
+  if(selection && selection.type==='company'){
+    // for company selection we show hires of that company across colleges (mocked extraction)
+    // Here we simulate by scanning topCompaniesThisYear: using selected company
+    companyCounts = {};
+    Object.keys(topCompaniesThisYear).forEach(col=>{
+      const cnt = topCompaniesThisYear[col][selection.value] || 0;
+      companyCounts[col] = cnt;
     });
-
-    const collegeData = {
-      "VIT": { total: 500, placed: 400, avgPackage: 6 },
-      "GVP": { total: 600, placed: 380, avgPackage: 5 },
-      "ANITS": { total: 450, placed: 350, avgPackage: 4.5 },
-      "RAGHU": { total: 520, placed: 410, avgPackage: 5.5 },
-      "MVGR": { total: 480, placed: 330, avgPackage: 4.8 },
-    };
-
-    const collegeSelect = document.getElementById("collegeSelect");
-    const totalStudents = document.getElementById("totalStudents");
-    const placedStudents = document.getElementById("placedStudents");
-    const avgPackage = document.getElementById("avgPackage");
-    const placementPercent = document.getElementById("placementPercent");
-
-    const ctx1 = document.getElementById("placementChart");
-    const ctx2 = document.getElementById("packageChart");
-
-    let placementChart = new Chart(ctx1, {
-      type: "doughnut",
-      data: {
-        labels: ["Placed", "Unplaced"],
-        datasets: [{ data: [0, 0], backgroundColor: ["#16a34a", "#e5e7eb"] }]
-      },
-      options: { responsive: true, plugins: { legend: { position: "bottom" } } }
-    });
-
-    let packageChart = new Chart(ctx2, {
-      type: "bar",
-      data: {
-        labels: [],
-        datasets: [{ label: "Average Package (LPA)", data: [], backgroundColor: "#2563eb" }]
-      },
-      options: { responsive: true, scales: { y: { beginAtZero: true } } }
-    });
-
-    function updateDashboard() {
-      const selected = Array.from(collegeSelect.selectedOptions).map(opt => opt.value);
-      if (selected.length === 0) {
-        totalStudents.textContent = 0;
-        placedStudents.textContent = 0;
-        avgPackage.textContent = "0 LPA";
-        placementPercent.textContent = "0%";
-        placementChart.data.datasets[0].data = [0, 0];
-        packageChart.data.labels = [];
-        packageChart.data.datasets[0].data = [];
-        placementChart.update();
-        packageChart.update();
-        return;
-      }
-
-      let total = 0, placed = 0, avg = 0;
-      selected.forEach(c => {
-        total += collegeData[c].total;
-        placed += collegeData[c].placed;
-        avg += collegeData[c].avgPackage;
-      });
-
-      const avgFinal = avg / selected.length;
-      const percent = ((placed / total) * 100).toFixed(1);
-
-      totalStudents.textContent = total;
-      placedStudents.textContent = placed;
-      avgPackage.textContent = `${avgFinal} LPA`;
-      placementPercent.textContent = `${percent}%`;
-
-      placementChart.data.datasets[0].data = [placed, total - placed];
-      packageChart.data.labels = selected;
-      packageChart.data.datasets[0].data = selected.map(c => collegeData[c].avgPackage);
-
-      placementChart.update();
-      packageChart.update();
+    const labels = Object.keys(companyCounts);
+    const data = Object.values(companyCounts);
+    barCompaniesChart.data.labels = labels;
+    barCompaniesChart.data.datasets[0].data = data;
+    barCompaniesChart.update();
+  } else {
+    // show top companies for the selected scope: if single college, use that map, else aggregate "All Colleges"
+    if(selection && selection.type==='college'){
+      const t = topCompaniesThisYear[selection.value] || topCompaniesThisYear['All Colleges'];
+      const labels = Object.keys(t);
+      const data = Object.values(t);
+      barCompaniesChart.data.labels = labels;
+      barCompaniesChart.data.datasets[0].data = data;
+      barCompaniesChart.update();
+    } else {
+      const t = topCompaniesThisYear['All Colleges'];
+      barCompaniesChart.data.labels = Object.keys(t);
+      barCompaniesChart.data.datasets[0].data = Object.values(t);
+      barCompaniesChart.update();
     }
+  }
 
-    collegeSelect.addEventListener("change", updateDashboard);
-  </script>
+  // Company visits per year (if single college selected show its year data, else aggregated)
+  const years = Object.keys(companyVisits).sort();
+  let yearData = years.map(y => {
+    if(selection && selection.type==='college') return companyVisits[y][selection.value] || 0;
+    // aggregated
+    return Object.values(companyVisits[y]).reduce((a,b)=>a+b,0);
+  });
+  companyYearChart.data.labels = years;
+  companyYearChart.data.datasets[0].data = yearData;
+  companyYearChart.update();
+
+  // Selection summary panel
+  selectionLabel.textContent = selection && selection.type!=='all' ? `${selection.type.toUpperCase()} • ${selection.value}` : 'All Colleges • All Years';
+  selColleges.textContent = (names.length>5) ? (names.length + ' colleges') : names.join(', ');
+  // selCompanies: count of distinct companies in topCompanies for these names (rough)
+  let compSet = new Set();
+  names.forEach(n=>{
+    const map = topCompaniesThisYear[n] || {};
+    Object.keys(map).forEach(c=>{ if(map[c]>0) compSet.add(c); });
+  });
+  selCompanies.textContent = compSet.size;
+}
+
+/* ======== Live ticker simulation ======== */
+function tickActive(){
+  // push new active point
+  const newPoint = Math.max(10, Math.floor(50 + Math.random()*150));
+  activeHistory.shift();
+  activeHistory.push(newPoint);
+  lineChart.data.datasets[0].data = activeHistory;
+  lineChart.update();
+  // update active-now number (simulate from aggregated)
+  const agg = aggregateAllStats();
+  // simulate active1h as last point scaled
+  document.getElementById('activeNow').textContent = activeHistory[activeHistory.length-1];
+}
+
+/* ======== Wire-up filter controls ======== */
+populateFilterValues('all');
+filterTypeEl.addEventListener('change',(e)=>{
+  populateFilterValues(e.target.value);
+});
+
+applyFilterBtn.addEventListener('click', ()=>{
+  const type = filterTypeEl.value;
+  const raw = filterValueEl.value;
+  if(type==='all' || raw==='All Colleges'){
+    updateOverview({ type:'all' });
+  } else if(raw.startsWith('district::')){
+    updateOverview({ type:'district', value: raw.split('::')[1] });
+  } else if(raw.startsWith('group::')){
+    updateOverview({ type:'group', value: raw.split('::')[1] });
+  } else if(raw.startsWith('company::')){
+    updateOverview({ type:'company', value: raw.split('::')[1] });
+  } else {
+    updateOverview({ type:type, value: raw });
+  }
+});
+
+clearFilterBtn.addEventListener('click', ()=>{
+  filterTypeEl.value='all'; populateFilterValues('all'); updateOverview({ type:'all' });
+});
+resetBtn.addEventListener('click', ()=>{ filterTypeEl.value='all'; populateFilterValues('all'); updateOverview({ type:'all' }); });
+
+/* ======== Init ======== */
+initCharts();
+renderActivity();
+updateOverview({ type:'all' });
+
+// start live ticker every 4 seconds
+setInterval(tickActive, 4000);
+
+</script>
 </body>
 </html>

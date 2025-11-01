@@ -3,28 +3,60 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CampusPanel Placement Admin</title>
+  <title>CampusPanel Admin Dashboard</title>
+
+  <!-- Tailwind CSS + Chart.js -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
-    body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; }
-    .glass { background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,255,255,0.65)); backdrop-filter: blur(6px);}
-    .card-shadow { box-shadow: 0 12px 30px rgba(2,6,23,0.09);}
-    .muted { color: #6B7280;}
-    .small { font-size: 0.92rem;}
-    .pulse { animation: pulse 1s;}
-    @keyframes pulse {0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
-    .filter-chip { background:#e0e7ef; border-radius:18px; padding:3px 10px; margin-right:6px; font-size:0.85rem; color:#243147;}
-    .sidebar-link {cursor:pointer; transition:background 0.2s, color 0.2s;}
-    .sidebar-link.active, .sidebar-link:focus {background-color:#eff6ff; color:#2563eb;}
-    .search-bar {border:1.5px solid #cbd5e1; border-radius:8px; padding:10px;}
-    .search-bar:focus {outline:none; border-color:#3b82f6;}
-    .fab {position:fixed; right:18px; bottom:28px; z-index:50; box-shadow:0 4px 30px #6366f188;}
-    .logo-text {display:inline;}
-    .sidebar-label {display:inline;}
-    .hamburger {display:none; position:absolute; top:18px; left:12px; background:#fff; z-index:100; border-radius:8px; padding:8px; box-shadow:0 2px 8px rgba(0,0,0,0.15);}
-    
+    body {
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+    }
+
+    .glass {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.65));
+      backdrop-filter: blur(6px);
+    }
+
+    .card-shadow {
+      box-shadow: 0 12px 30px rgba(2, 6, 23, 0.09);
+    }
+
+    .muted {
+      color: #6B7280;
+    }
+
+    .pulse {
+      animation: pulse 1s;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .fab {
+      position: fixed;
+      right: 18px;
+      bottom: 28px;
+      z-index: 50;
+      box-shadow: 0 4px 30px #6366f188;
+    }
+
     /* ✅ Responsive Sidebar */
+    .hamburger {
+      display: none;
+      position: absolute;
+      top: 18px;
+      left: 12px;
+      background: #fff;
+      z-index: 100;
+      border-radius: 8px;
+      padding: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
     @media (max-width: 900px) {
       aside {
         position: fixed;
@@ -37,83 +69,218 @@
         border-right: 1px solid #e2e8f0;
         transition: left 0.3s ease-in-out;
       }
-      aside.open { left: 0; }
-      .logo-text, .sidebar-label {display:none;}
-      .hamburger {display:inline-block;}
-      main { padding: 1rem; }
+
+      aside.open {
+        left: 0;
+      }
+
+      .hamburger {
+        display: inline-block;
+      }
+
+      main {
+        padding: 1rem;
+      }
     }
 
-    /* ✅ Tablet adjustments */
+    /* Tablet adjustments */
     @media (max-width: 768px) {
-      .grid-cols-6 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .text-3xl { font-size: 1.8rem; }
-      .p-4 { padding: 1rem; }
-      .card-shadow { box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+      .grid-cols-6 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
-    /* ✅ Mobile optimizations */
+    /* Mobile optimizations */
     @media (max-width: 500px) {
-      .grid { gap: 0.75rem; }
-      .text-2xl { font-size: 1.25rem; }
-      .text-xl { font-size: 1.1rem; }
-      .search-bar { font-size: 0.9rem; padding: 8px; }
-      .fab { right: 12px; bottom: 14px; font-size: 1rem; padding: 10px 16px; }
+      .grid {
+        gap: 0.75rem;
+      }
+
+      .fab {
+        right: 12px;
+        bottom: 14px;
+        font-size: 1rem;
+        padding: 10px 16px;
+      }
     }
 
-    main { scroll-behavior: smooth; min-height: 100vh; }
   </style>
 </head>
+
 <body class="bg-gradient-to-b from-slate-50 to-white min-h-screen">
+  <div class="min-h-screen flex relative">
 
-<div class="min-h-screen flex relative">
+    <!-- Hamburger Menu -->
+    <button id="hamburgerBtn" class="hamburger border">
+      <svg width="26" height="26" fill="none" stroke="#222">
+        <path stroke-width="2" d="M6 9h14M6 13h14M6 17h14" />
+      </svg>
+    </button>
 
-  <!-- Hamburger Menu -->
-  <button id="hamburgerBtn" class="hamburger border">
-    <svg width="26" height="26" fill="none" stroke="#222">
-      <path stroke-width="2" d="M6 9h14M6 13h14M6 17h14"/>
-    </svg>
-  </button>
-
-  <!-- Sidebar -->
-  <aside id="sidebar" class="w-72 bg-white/60 backdrop-blur-md p-6 border-r border-slate-200 md:sticky top-0 left-0 h-screen z-40">
-    <div class="logo flex items-center gap-3 mb-6">
-      <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-500 text-white flex items-center justify-center font-bold">CP</div>
-      <div class="logo-text">
-        <div class="text-xl font-semibold">CampusPanel</div>
-        <div class="text-xs muted">Admin Dashboard</div>
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-72 bg-white/60 backdrop-blur-md p-6 border-r border-slate-200 md:sticky top-0 left-0 h-screen z-40">
+      <div class="logo flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-500 text-white flex items-center justify-center font-bold">
+          CP
+        </div>
+        <div>
+          <div class="text-xl font-semibold">CampusPanel</div>
+          <div class="text-xs muted">Admin Dashboard</div>
+        </div>
       </div>
-    </div>
-    <nav class="space-y-2 text-slate-700">
-      <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg" data-section="dashboard">🏠 <span class="sidebar-label">Dashboard</span></a>
-      <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg" data-section="students">👩‍🎓 <span class="sidebar-label">Students</span></a>
-      <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg" data-section="colleges">🏫 <span class="sidebar-label">Colleges</span></a>
-      <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg" data-section="companies">🏢 <span class="sidebar-label">Companies</span></a>
-      <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg" data-section="reports">📄 <span class="sidebar-label">Reports</span></a>
-    </nav>
-  </aside>
 
-  <!-- Main Content -->
-  <main id="mainContent" class="flex-1 p-6 md:ml-72 space-y-6"></main>
+      <nav class="space-y-2 text-slate-700">
+        <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-50 text-blue-600" data-section="dashboard">
+          🏠 <span>Dashboard</span>
+        </a>
+        <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg" data-section="students">👩‍🎓 <span>Students</span></a>
+        <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg" data-section="colleges">🏫 <span>Colleges</span></a>
+        <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg" data-section="companies">🏢 <span>Companies</span></a>
+        <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg" data-section="reports">📄 <span>Reports</span></a>
+      </nav>
+    </aside>
 
-  <!-- Floating Add Button -->
-  <button id="fab" class="fab bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition hidden">+ Add</button>
-</div>
+    <!-- Main Content -->
+    <main id="mainContent" class="flex-1 p-6 md:ml-72 space-y-6">
 
-<script>
-const sidebar = document.getElementById('sidebar');
-const hamburgerBtn = document.getElementById('hamburgerBtn');
-let sidebarOpen = false;
-hamburgerBtn.onclick = () => {
-  sidebarOpen = !sidebarOpen;
-  sidebar.classList.toggle('open', sidebarOpen);
-};
-window.addEventListener('resize', () => {
-  if (window.innerWidth > 900) sidebar.classList.remove('open');
-});
-</script>
+      <h1 class="text-3xl font-bold text-slate-800">Placement Dashboard</h1>
 
-<!-- 🔽 Keep your JavaScript logic below here (unchanged) -->
-<!-- Paste your JS from original file below this comment -->
+      <!-- Multi-Select Dropdown -->
+      <div class="bg-white/80 rounded-xl shadow p-4 border border-slate-200">
+        <label class="block mb-2 font-medium text-slate-700">Select Colleges:</label>
+        <select id="collegeSelect" multiple class="border border-slate-300 rounded-lg p-2 w-full">
+          <option value="VIT">VIT</option>
+          <option value="GVP">GVP</option>
+          <option value="ANITS">ANITS</option>
+          <option value="RAGHU">RAGHU</option>
+          <option value="MVGR">MVGR</option>
+        </select>
+      </div>
 
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass p-5 rounded-xl text-center card-shadow">
+          <h2 class="text-slate-700 font-semibold">Total Students</h2>
+          <p id="totalStudents" class="text-2xl font-bold text-blue-600">0</p>
+        </div>
+        <div class="glass p-5 rounded-xl text-center card-shadow">
+          <h2 class="text-slate-700 font-semibold">Placed Students</h2>
+          <p id="placedStudents" class="text-2xl font-bold text-green-600">0</p>
+        </div>
+        <div class="glass p-5 rounded-xl text-center card-shadow">
+          <h2 class="text-slate-700 font-semibold">Average Package</h2>
+          <p id="avgPackage" class="text-2xl font-bold text-indigo-600">0 LPA</p>
+        </div>
+        <div class="glass p-5 rounded-xl text-center card-shadow">
+          <h2 class="text-slate-700 font-semibold">Placement %</h2>
+          <p id="placementPercent" class="text-2xl font-bold text-orange-600">0%</p>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="glass p-4 rounded-xl card-shadow">
+          <canvas id="placementChart"></canvas>
+        </div>
+        <div class="glass p-4 rounded-xl card-shadow">
+          <canvas id="packageChart"></canvas>
+        </div>
+      </div>
+    </main>
+
+    <!-- Floating Add Button -->
+    <button id="fab" class="fab bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition hidden">
+      + Add
+    </button>
+  </div>
+
+  <!-- JS Logic -->
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    let sidebarOpen = false;
+    hamburgerBtn.onclick = () => {
+      sidebarOpen = !sidebarOpen;
+      sidebar.classList.toggle('open', sidebarOpen);
+    };
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900) sidebar.classList.remove('open');
+    });
+
+    const collegeData = {
+      "VIT": { total: 500, placed: 400, avgPackage: 6 },
+      "GVP": { total: 600, placed: 380, avgPackage: 5 },
+      "ANITS": { total: 450, placed: 350, avgPackage: 4.5 },
+      "RAGHU": { total: 520, placed: 410, avgPackage: 5.5 },
+      "MVGR": { total: 480, placed: 330, avgPackage: 4.8 },
+    };
+
+    const collegeSelect = document.getElementById("collegeSelect");
+    const totalStudents = document.getElementById("totalStudents");
+    const placedStudents = document.getElementById("placedStudents");
+    const avgPackage = document.getElementById("avgPackage");
+    const placementPercent = document.getElementById("placementPercent");
+
+    const ctx1 = document.getElementById("placementChart");
+    const ctx2 = document.getElementById("packageChart");
+
+    let placementChart = new Chart(ctx1, {
+      type: "doughnut",
+      data: {
+        labels: ["Placed", "Unplaced"],
+        datasets: [{ data: [0, 0], backgroundColor: ["#16a34a", "#e5e7eb"] }]
+      },
+      options: { responsive: true, plugins: { legend: { position: "bottom" } } }
+    });
+
+    let packageChart = new Chart(ctx2, {
+      type: "bar",
+      data: {
+        labels: [],
+        datasets: [{ label: "Average Package (LPA)", data: [], backgroundColor: "#2563eb" }]
+      },
+      options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+
+    function updateDashboard() {
+      const selected = Array.from(collegeSelect.selectedOptions).map(opt => opt.value);
+      if (selected.length === 0) {
+        totalStudents.textContent = 0;
+        placedStudents.textContent = 0;
+        avgPackage.textContent = "0 LPA";
+        placementPercent.textContent = "0%";
+        placementChart.data.datasets[0].data = [0, 0];
+        packageChart.data.labels = [];
+        packageChart.data.datasets[0].data = [];
+        placementChart.update();
+        packageChart.update();
+        return;
+      }
+
+      let total = 0, placed = 0, avg = 0;
+      selected.forEach(c => {
+        total += collegeData[c].total;
+        placed += collegeData[c].placed;
+        avg += collegeData[c].avgPackage;
+      });
+
+      const avgFinal = avg / selected.length;
+      const percent = ((placed / total) * 100).toFixed(1);
+
+      totalStudents.textContent = total;
+      placedStudents.textContent = placed;
+      avgPackage.textContent = `${avgFinal} LPA`;
+      placementPercent.textContent = `${percent}%`;
+
+      placementChart.data.datasets[0].data = [placed, total - placed];
+      packageChart.data.labels = selected;
+      packageChart.data.datasets[0].data = selected.map(c => collegeData[c].avgPackage);
+
+      placementChart.update();
+      packageChart.update();
+    }
+
+    collegeSelect.addEventListener("change", updateDashboard);
+  </script>
 </body>
 </html>

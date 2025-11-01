@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CampusPanel Placement Admin</title>
+  <title>CampusPanel Placement Admin (Responsive)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -20,23 +20,39 @@
     .search-bar {border: 1.5px solid #cbd5e1; border-radius: 8px;}
     .search-bar:focus {outline: none; border-color: #3b82f6;}
     .fab {position: fixed; right: 18px; bottom: 32px; z-index:50; box-shadow:0 4px 30px #6366f188;}
-    /* Responsive sidebar */
+    .logo-text {display:inline;}
+    .sidebar-label {display:inline;}
+    .hamburger {display:none; position:absolute; top:18px; left:12px; background:#fff; z-index:100; border-radius:8px; padding:8px;}
     @media (max-width: 900px) {
       aside { width: 56px !important; padding:0 !important;}
-      aside *:not(.logo, nav, .muted) { display: none !important;}
-      nav {padding:0;}
-      nav a {justify-content:center;}
+      .logo-text {display:none;}
+      .sidebar-label {display:none;}
+      .hamburger {display:inline;}
     }
+    @media (max-width: 640px) {
+      .fab { right: 10px; bottom: 14px; padding:12px 20px; font-size:1rem;}
+    }
+    @media (max-width:500px){
+      main {padding:8px;}
+      .card-shadow, .glass {padding:10px;}
+    }
+    /* Smooth scroll for section changes */
+    main {scroll-behavior: smooth;}
   </style>
 </head>
 <body class="bg-gradient-to-b from-slate-50 to-white min-h-screen">
-<div class="min-h-screen flex">
+<div class="min-h-screen flex relative">
+
+  <!-- Hamburger menu for mobile -->
+  <button id="hamburgerBtn" class="hamburger border">
+    <svg width="28" height="28" fill="none" stroke="#222"><rect width="28" height="28"/><path stroke-width="2" d="M7 10h14M7 14h14M7 18h14"/></svg>
+  </button>
 
   <!-- Sidebar -->
-  <aside class="w-72 bg-white/60 backdrop-blur-md p-6 border-r border-slate-200 transition-all duration-300">
+  <aside id="sidebar" class="w-72 bg-white/60 backdrop-blur-md p-6 border-r border-slate-200 transition-all duration-300 fixed md:sticky top-0 left-0 h-screen z-40">
     <div class="logo flex items-center gap-3 mb-6">
       <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-500 text-white flex items-center justify-center font-bold">CP</div>
-      <div>
+      <div class="logo-text">
         <div class="text-xl font-semibold">CampusPanel</div>
         <div class="text-xs muted">Admin Dashboard</div>
       </div>
@@ -48,15 +64,15 @@
       <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg" data-section="companies" title="Companies"><span>🏢</span><span class="sidebar-label">Companies</span></a>
       <a class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg" data-section="reports" title="Reports"><span>📄</span><span class="sidebar-label">Reports</span></a>
     </nav>
-    <div class="mt-8">
+    <div class="mt-8 logo-text">
       <div class="text-xs muted mb-2">Quick actions</div>
       <button id="resetBtn" class="w-full px-3 py-2 rounded-lg border text-sm">Reset Filters</button>
     </div>
-    <div class="mt-6 text-xs muted">Built for: College Placement Analytics</div>
+    <div class="mt-6 text-xs muted logo-text">Built for: College Placement Analytics</div>
   </aside>
 
   <!-- Main content area -->
-  <main id="mainContent" class="flex-1 p-6 space-y-6">
+  <main id="mainContent" class="flex-1 p-6 space-y-6 md:ml-72">
     <!-- Content loads here dynamically -->
   </main>
 
@@ -65,7 +81,6 @@
 </div>
 
 <script>
-// -------- DATA MODEL --------
 const colleges = [
   { name: "ABC Engineering", district: "Hyderabad", group: "Group A" },
   { name: "XYZ Tech", district: "Hyderabad", group: "Group A" },
@@ -103,13 +118,30 @@ let sampleActivity = [
   { person: "MGIT Admin", action: "Added 40 new students", college: "MGIT", time: "2h ago" }
 ];
 
-// -------- NAVIGATION --------
 const mainContent = document.getElementById('mainContent');
 const sidebarLinks = document.querySelectorAll('.sidebar-link');
 const fab = document.getElementById('fab');
 let currentSection = 'dashboard';
 
-// Define rendering functions for each section
+// Hamburger sidebar toggle
+const sidebar = document.getElementById('sidebar');
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+let sidebarOpen = false;
+function closeSidebarMobile(){sidebar.style.left='-100px';sidebarOpen=false;}
+function openSidebarMobile(){sidebar.style.left='0';sidebarOpen=true;}
+hamburgerBtn.onclick = function(){
+  if(!sidebarOpen) openSidebarMobile();
+  else closeSidebarMobile();
+};
+window.addEventListener('resize', ()=>{
+  if(window.innerWidth>900){
+    sidebar.style.left='0'; sidebarOpen=true;
+  }else{
+    closeSidebarMobile();
+  }
+});
+
+
 const sections = {
   dashboard: renderDashboardSection,
   students: renderStudentsSection,
@@ -117,7 +149,6 @@ const sections = {
   companies: renderCompaniesSection,
   reports: renderReportsSection
 };
-
 sidebarLinks.forEach(link => {
   link.addEventListener('click', (e) => {
     sidebarLinks.forEach(l => l.classList.remove('active'));
@@ -132,12 +163,13 @@ sidebarLinks.forEach(link => {
     );
     fab.onclick = function(){ showAddModal(currentSection)};
     sections[currentSection]();
+    // Close sidebar on mobile after section click
+    if(window.innerWidth<900) closeSidebarMobile();
   });
 });
 sidebarLinks[0].classList.add('active');
 setTimeout(()=>sections.dashboard(),50);
 
-// -------- GLOBAL SEARCH --------
 function globalSearchBar() {
   return `
     <div class="w-full max-w-3xl mx-auto mb-6">
@@ -145,15 +177,16 @@ function globalSearchBar() {
     </div>
   `;
 }
-
-// -------- SECTION RENDERERS --------
 function renderDashboardSection() {
   mainContent.innerHTML = `
     ${globalSearchBar()}
-    <div class="flex items-center justify-between gap-4 mb-2">
-      <div class="flex items-center gap-4"><div class="text-2xl font-bold">Overview</div><div class="text-sm muted">Live insights — auto-updating</div></div>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-2">
       <div class="flex items-center gap-4">
-        <div class="text-right">
+        <div class="text-2xl font-bold">Overview</div>
+        <div class="text-sm muted">Live insights — auto-updating</div>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="text-right hidden md:block">
           <div class="font-semibold">Admin</div>
           <div class="text-xs muted">admin@campus.com</div>
         </div>
@@ -207,7 +240,7 @@ function renderDashboardSection() {
 function renderStudentsSection() {
   mainContent.innerHTML = `
     ${globalSearchBar()}
-    <div class="flex items-center gap-4 mb-4">
+    <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
       <div class="text-2xl font-bold">👩‍🎓 Students</div>
       <div class="text-sm muted">Browse, search, and filter all students</div>
     </div>
@@ -236,7 +269,7 @@ function renderStudentsTable(query = "") {
       s.branch.toLowerCase().includes(query.toLowerCase())
     );
   }
-  let html = `<table class="min-w-full text-sm"><thead><tr>
+  let html = `<div class="overflow-x-auto"><table class="min-w-full text-sm"><thead><tr>
       <th class="p-2 text-left">Name</th><th class="p-2 text-left">College</th>
       <th class="p-2 text-left">Branch</th><th class="p-2 text-left">Year</th>
       <th class="p-2 text-left">Placed</th></tr></thead><tbody>`;
@@ -247,17 +280,17 @@ function renderStudentsTable(query = "") {
       <td class="p-2">${s.year}</td>
       <td class="p-2">${s.placed?'<span class="text-green-600">Yes</span>':'<span class="text-red-600">No</span>'}</td></tr>`;
   });
-  html += `</tbody></table>`;
+  html += `</tbody></table></div>`;
   document.getElementById('studentsTable').innerHTML = html;
 }
 function renderCollegesSection() {
   mainContent.innerHTML = `
     ${globalSearchBar()}
-    <div class="flex items-center gap-4 mb-4">
+    <div class="flex items-center gap-4 mb-4 flex-col sm:flex-row">
       <div class="text-2xl font-bold">🏫 Colleges</div>
       <div class="text-sm muted">List of all participating colleges</div>
     </div>
-    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8" id="collegesGrid"></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8" id="collegesGrid"></div>
   `;
   renderCollegesGrid();
   document.getElementById('globalSearch').oninput = function () {
@@ -278,11 +311,11 @@ function renderCollegesGrid(query="") {
 function renderCompaniesSection() {
   mainContent.innerHTML = `
     ${globalSearchBar()}
-    <div class="flex items-center gap-4 mb-4">
+    <div class="flex items-center gap-4 mb-4 flex-col sm:flex-row">
       <div class="text-2xl font-bold">🏢 Companies</div>
       <div class="text-sm muted">Top recruiters this year</div>
     </div>
-    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10" id="companiesGrid"></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10" id="companiesGrid"></div>
   `;
   renderCompaniesGrid();
   document.getElementById('globalSearch').oninput = function () {
@@ -302,7 +335,7 @@ function renderCompaniesGrid(query="") {
 function renderReportsSection() {
   mainContent.innerHTML = `
     ${globalSearchBar()}
-    <div class="flex items-center gap-4 mb-4">
+    <div class="flex items-center gap-4 mb-4 flex-col sm:flex-row">
       <div class="text-2xl font-bold">📄 Reports</div>
       <div class="text-sm muted">Download analytics and placement reports</div>
     </div>
@@ -315,7 +348,6 @@ function renderReportsSection() {
   `;
 } 
 
-// -------- DASHBOARD LOGIC, FILTERS, CARDS, CHARTS --------
 let filterState = {search:""};
 function runDashboardLogic() {
   renderFilterChips();
@@ -331,14 +363,12 @@ function runDashboardLogic() {
   pieChart?.destroy(); lineChart?.destroy(); barCompaniesChart?.destroy(); companyYearChart?.destroy();
   setupCharts(total, placed);
 
-  // Selection summary panel
   document.getElementById('selectionLabel').textContent = names.length<=5?(names.join(', ')||'All Colleges • All Years'):`All Colleges • All Years`;
   document.getElementById('selColleges').textContent = (names.length>5)?(names.length+' colleges'):names.join(', ');
   let compSet = new Set();
   names.forEach(n=>{const map=topCompaniesThisYear[n]||{}; Object.keys(map).forEach(c=>{if(map[c]>0)compSet.add(c);})});
   document.getElementById('selCompanies').textContent = compSet.size;
 
-  // Activity feed filtering 
   let curFeed = sampleActivity.filter(a =>
     (!filterState.search ||
       a.person.toLowerCase().includes(filterState.search.toLowerCase()) ||
@@ -384,7 +414,6 @@ function animateCardUpdate(cardId) {
   const el = document.getElementById(cardId);
   el.classList.add('pulse'); setTimeout(()=>el.classList.remove('pulse'), 800);
 }
-// Charts 
 let pieChart,lineChart,barCompaniesChart,companyYearChart;
 let activeHistory = Array.from({length:24}, (_,i)=> Math.floor(50 + Math.random()*120));
 function setupCharts(total, placed){
@@ -409,7 +438,6 @@ function setupCharts(total, placed){
     options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
   });
 }
-// Recent Activity
 function renderActivity(list) {
   let out = (list.length?list:sampleActivity).map(a=>`
     <li class="flex items-start gap-3">
@@ -428,21 +456,15 @@ function renderFilterChips() {
   if (filterState.search)
     el.innerHTML += `<span class="filter-chip">search: "${filterState.search}"</span>`;
 }
-// Live ticker
 setInterval(function() {
   activeHistory.shift();
   activeHistory.push(Math.max(12, Math.floor(40+Math.random()*130)));
   if(currentSection==='dashboard') runDashboardLogic();
 },4000);
 
-// -------- MODALS FOR ADDING --------
 function showAddModal(type){
   alert('Add '+ (type==='students'?"Student":type==='companies'?"Company":type==='colleges'?"College":'Record')+'\n(Feature demo - integrate your form here)');
 }
-
-// -------- SIDEBAR COLLAPSE ON SMALL DEVICES --------
-// Already done by CSS: try resizing window
-
 </script>
 </body>
 </html>
